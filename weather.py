@@ -49,8 +49,8 @@ def calculate_mean(weather_data):
         A float representing the mean value.
     """
     new_weather_data =[]
-    for x in weather_data:
-        num_value = float(x)
+    for data in weather_data:
+        num_value = float(data)
         new_weather_data.append(num_value)
     mean_value = sum(new_weather_data)/len(new_weather_data)
     return mean_value
