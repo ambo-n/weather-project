@@ -24,7 +24,9 @@ def convert_date(iso_string):
     Returns:
         A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
     """
-    pass
+    date_object = datetime.fromisoformat(iso_string)
+    formatted_date = date_object.strftime("%A %d %B %Y")
+    return formatted_date
 
 
 def convert_f_to_c(temp_in_fahrenheit):
@@ -64,6 +66,7 @@ def load_data_from_csv(csv_file):
         A list of lists, where each sublist is a (non-empty) line in the csv file.
     """
     pass
+ 
 
 
 def find_min(weather_data):
