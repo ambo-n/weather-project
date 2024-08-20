@@ -65,8 +65,14 @@ def load_data_from_csv(csv_file):
     Returns:
         A list of lists, where each sublist is a (non-empty) line in the csv file.
     """
-    pass
- 
+    csv_list =[]
+    with open(csv_file) as file:
+        csv_reader = csv.reader(file)
+        next(csv_reader)
+        for row in csv_reader:
+            if row:
+                csv_list.append([row[0],float(row[1]),float(row[2])])
+    return csv_list
 
 
 def find_min(weather_data):
@@ -139,4 +145,12 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    pass
+    for sublist in weather_data:
+        iso_string = sublist[0]
+        min_temp_in_f = sublist[1]
+        max_temp_in_f = sublist[2]
+        format_date = convert_date(iso_string)
+        min_temp_in_c = convert_f_to_c(min_temp_in_f)
+        max_temp_in_c = convert_f_to_c(max_temp_in_f)
+        return f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n\n"
+        #print(f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n")
