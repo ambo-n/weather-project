@@ -134,8 +134,25 @@ def generate_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    pass
+    number_of_days= len(weather_data)
+    min_temp_list =[]
+    max_temp_list =[]
+    for sublist in weather_data:
+        min_value_in_f = float(sublist[1])
+        max_value_in_f = float(sublist [2])
+        min_temp_list.append(min_value_in_f)
+        max_temp_list.append(max_value_in_f)
 
+    average_low = convert_f_to_c(calculate_mean(min_temp_list))
+    average_high = convert_f_to_c(calculate_mean(max_temp_list))
+    min_temp_in_week = find_min(min_temp_list)
+    max_temp_in_week = find_max(max_temp_list)
+    min_temp_in_c = convert_f_to_c(min_temp_in_week[0])
+    min_temp_day = convert_date(weather_data [min_temp_in_week[1]][0])
+    max_temp_in_c = convert_f_to_c(max_temp_in_week[0])
+    max_temp_day = convert_date(weather_data [max_temp_in_week[1]][0])
+
+    return f"{number_of_days} Day Overview\n  The lowest temperature will be {min_temp_in_c}°C, and will occur on {min_temp_day}.\n  The highest temperature will be {max_temp_in_c}°C, and will occur on {max_temp_day}.\n  The average low this week is {average_low}°C.\n  The average high this week is {average_high}°C.\n"
 
 def generate_daily_summary(weather_data):
     """Outputs a daily summary for the given weather data.
@@ -145,6 +162,7 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
+    summary_string = f""
     for sublist in weather_data:
         iso_string = sublist[0]
         min_temp_in_f = sublist[1]
@@ -152,5 +170,6 @@ def generate_daily_summary(weather_data):
         format_date = convert_date(iso_string)
         min_temp_in_c = convert_f_to_c(min_temp_in_f)
         max_temp_in_c = convert_f_to_c(max_temp_in_f)
-        return f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n\n"
-        #print(f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n")
+        summary_string += f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n\n"
+    return summary_string
+    
