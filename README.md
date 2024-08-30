@@ -1,5 +1,7 @@
 # Plus Resources: Weather Project Template
 
+[![Tests](https://github.com/ambo-n/weather-project/actions/workflows/tests.yml/badge.svg)](https://github.com/ambo-n/weather-project/actions/workflows/tests.yml)
+
 Starter code for the Plus Weather project.
 
 ## TODO
