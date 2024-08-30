@@ -50,10 +50,7 @@ def calculate_mean(weather_data):
     Returns:
         A float representing the mean value.
     """
-    new_weather_data =[]
-    for data in weather_data:
-        num_value = float(data)
-        new_weather_data.append(num_value)
+    new_weather_data =[float(data) for data in weather_data]
     mean_value = sum(new_weather_data)/len(new_weather_data)
     return mean_value
 
@@ -84,11 +81,7 @@ def find_min(weather_data):
         The minimum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
     while weather_data:
-        new_weather_data = []
-        for val in weather_data:
-            num_val = float(val)
-            new_weather_data.append(num_val)
-    
+        new_weather_data = [float(val) for val in weather_data]
         min_temp = min(new_weather_data)
         min_count = [index for index, value in enumerate(new_weather_data) if value == min_temp]
         if len(min_count) < 2:
@@ -110,11 +103,7 @@ def find_max(weather_data):
         The maximum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
     while weather_data:
-        new_weather_data = []
-        for val in weather_data:
-            num_val = float(val)
-            new_weather_data.append(num_val)
-    
+        new_weather_data = [float(val) for val in weather_data]
         max_temp = max(new_weather_data)
         max_count = [index for index, value in enumerate(new_weather_data) if value == max_temp]
         if len(max_count) < 2:
@@ -135,24 +124,12 @@ def generate_summary(weather_data):
         A string containing the summary information.
     """
     number_of_days= len(weather_data)
-    min_temp_list =[]
-    max_temp_list =[]
-    for sublist in weather_data:
-        min_value_in_f = float(sublist[1])
-        max_value_in_f = float(sublist [2])
-        min_temp_list.append(min_value_in_f)
-        max_temp_list.append(max_value_in_f)
-
-    average_low = convert_f_to_c(calculate_mean(min_temp_list))
-    average_high = convert_f_to_c(calculate_mean(max_temp_list))
+    min_temp_list =[float(sublist[1]) for sublist in weather_data]
+    max_temp_list =[float(sublist[2]) for sublist in weather_data]
     min_temp_in_week = find_min(min_temp_list)
     max_temp_in_week = find_max(max_temp_list)
-    min_temp_in_c = convert_f_to_c(min_temp_in_week[0])
-    min_temp_day = convert_date(weather_data [min_temp_in_week[1]][0])
-    max_temp_in_c = convert_f_to_c(max_temp_in_week[0])
-    max_temp_day = convert_date(weather_data [max_temp_in_week[1]][0])
 
-    return f"{number_of_days} Day Overview\n  The lowest temperature will be {min_temp_in_c}°C, and will occur on {min_temp_day}.\n  The highest temperature will be {max_temp_in_c}°C, and will occur on {max_temp_day}.\n  The average low this week is {average_low}°C.\n  The average high this week is {average_high}°C.\n"
+    return f"{number_of_days} Day Overview\n  The lowest temperature will be {convert_f_to_c(min_temp_in_week[0])}°C, and will occur on {convert_date(weather_data [min_temp_in_week[1]][0])}.\n  The highest temperature will be {convert_f_to_c(max_temp_in_week[0])}°C, and will occur on {convert_date(weather_data [max_temp_in_week[1]][0])}.\n  The average low this week is {convert_f_to_c(calculate_mean(min_temp_list))}°C.\n  The average high this week is {convert_f_to_c(calculate_mean(max_temp_list))}°C.\n"
 
 def generate_daily_summary(weather_data):
     """Outputs a daily summary for the given weather data.
@@ -165,11 +142,8 @@ def generate_daily_summary(weather_data):
     summary_string = f""
     for sublist in weather_data:
         iso_string = sublist[0]
-        min_temp_in_f = sublist[1]
-        max_temp_in_f = sublist[2]
-        format_date = convert_date(iso_string)
-        min_temp_in_c = convert_f_to_c(min_temp_in_f)
-        max_temp_in_c = convert_f_to_c(max_temp_in_f)
-        summary_string += f"---- {format_date} ----\n  Minimum Temperature: {min_temp_in_c}°C\n  Maximum Temperature: {max_temp_in_c}°C\n\n"
+        min_temp = sublist[1]
+        max_temp = sublist[2]
+        summary_string += f"---- {convert_date(iso_string)} ----\n  Minimum Temperature: {convert_f_to_c(min_temp)}°C\n  Maximum Temperature: {convert_f_to_c(max_temp)}°C\n\n"
     return summary_string
     
