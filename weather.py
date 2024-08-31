@@ -25,8 +25,7 @@ def convert_date(iso_string):
         A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
     """
     date_object = datetime.fromisoformat(iso_string)
-    formatted_date = date_object.strftime("%A %d %B %Y")
-    return formatted_date
+    return date_object.strftime("%A %d %B %Y")
 
 
 def convert_f_to_c(temp_in_fahrenheit):
@@ -51,8 +50,7 @@ def calculate_mean(weather_data):
         A float representing the mean value.
     """
     new_weather_data =[float(data) for data in weather_data]
-    mean_value = sum(new_weather_data)/len(new_weather_data)
-    return mean_value
+    return sum(new_weather_data)/len(new_weather_data)
 
 def load_data_from_csv(csv_file):
     """Reads a csv file and stores the data in a list.
@@ -62,15 +60,21 @@ def load_data_from_csv(csv_file):
     Returns:
         A list of lists, where each sublist is a (non-empty) line in the csv file.
     """
-    csv_list =[]
     with open(csv_file) as file:
-        csv_reader = csv.reader(file)
-        next(csv_reader)
-        for row in csv_reader:
-            if row:
-                csv_list.append([row[0],float(row[1]),float(row[2])])
-    return csv_list
+        csv_dictReader = csv.DictReader(file)
+        return [[row["date"], float(row["min"]), float(row["max"])]for row in csv_dictReader if row]
 
+def find_last_occurance(templist, value):
+    """ Finds the index of the last occurance for the value of interest
+
+    Args: 
+        temp_list: a list of numbers
+        value: value in which the index of the last occurance needs to be identified
+
+    Returns:
+        The index of the last occurance for the value of interest
+    """
+    return len(templist) - 1 - templist[::-1].index(value)
 
 def find_min(weather_data):
     """Calculates the minimum value in a list of numbers.
@@ -80,19 +84,11 @@ def find_min(weather_data):
     Returns:
         The minimum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
-    while weather_data:
-        new_weather_data = [float(val) for val in weather_data]
-        min_temp = min(new_weather_data)
-        min_count = [index for index, value in enumerate(new_weather_data) if value == min_temp]
-        if len(min_count) < 2:
-            for index, value in enumerate(new_weather_data):
-                if value == min_temp:
-                    return value, index
-        else:
-            last_index = min_count[-1]
-            return min_temp, last_index
-    return ()
-    
+    if not weather_data:
+        return ()
+    else:
+        temps = [float(temp) for temp in weather_data]
+        return min(temps), find_last_occurance(temps, min(temps))
 
 def find_max(weather_data):
     """Calculates the maximum value in a list of numbers.
@@ -102,18 +98,11 @@ def find_max(weather_data):
     Returns:
         The maximum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
-    while weather_data:
-        new_weather_data = [float(val) for val in weather_data]
-        max_temp = max(new_weather_data)
-        max_count = [index for index, value in enumerate(new_weather_data) if value == max_temp]
-        if len(max_count) < 2:
-            for index, value in enumerate(new_weather_data):
-                if value == max_temp:
-                    return value, index
-        else:
-            last_index = max_count[-1]
-            return max_temp, last_index
-    return ()
+    if not weather_data:
+        return ()
+    else:
+        temps = [float(temp) for temp in weather_data]
+        return max(temps), find_last_occurance(temps, max(temps))
 
 def generate_summary(weather_data):
     """Outputs a summary for the given weather data.
@@ -125,11 +114,19 @@ def generate_summary(weather_data):
     """
     number_of_days= len(weather_data)
     min_temp_list =[float(sublist[1]) for sublist in weather_data]
-    max_temp_list =[float(sublist[2]) for sublist in weather_data]
     min_temp_in_week = find_min(min_temp_list)
+    max_temp_list =[float(sublist[2]) for sublist in weather_data]
     max_temp_in_week = find_max(max_temp_list)
 
-    return f"{number_of_days} Day Overview\n  The lowest temperature will be {convert_f_to_c(min_temp_in_week[0])}°C, and will occur on {convert_date(weather_data [min_temp_in_week[1]][0])}.\n  The highest temperature will be {convert_f_to_c(max_temp_in_week[0])}°C, and will occur on {convert_date(weather_data [max_temp_in_week[1]][0])}.\n  The average low this week is {convert_f_to_c(calculate_mean(min_temp_list))}°C.\n  The average high this week is {convert_f_to_c(calculate_mean(max_temp_list))}°C.\n"
+    return (
+        f"{number_of_days} Day Overview\n"
+        f"  The lowest temperature will be {convert_f_to_c(min_temp_in_week[0])}°C,"
+        f" and will occur on {convert_date(weather_data [min_temp_in_week[1]][0])}.\n"
+        f"  The highest temperature will be {convert_f_to_c(max_temp_in_week[0])}°C,"
+        f" and will occur on {convert_date(weather_data [max_temp_in_week[1]][0])}.\n"
+        f"  The average low this week is {convert_f_to_c(calculate_mean(min_temp_list))}°C.\n"
+        f"  The average high this week is {convert_f_to_c(calculate_mean(max_temp_list))}°C.\n"
+    )
 
 def generate_daily_summary(weather_data):
     """Outputs a daily summary for the given weather data.
@@ -144,6 +141,10 @@ def generate_daily_summary(weather_data):
         iso_string = sublist[0]
         min_temp = sublist[1]
         max_temp = sublist[2]
-        summary_string += f"---- {convert_date(iso_string)} ----\n  Minimum Temperature: {convert_f_to_c(min_temp)}°C\n  Maximum Temperature: {convert_f_to_c(max_temp)}°C\n\n"
+        summary_string += (
+            f"---- {convert_date(iso_string)} ----\n"
+            f"  Minimum Temperature: {convert_f_to_c(min_temp)}°C\n"
+            f"  Maximum Temperature: {convert_f_to_c(max_temp)}°C\n\n"
+        )
     return summary_string
     
